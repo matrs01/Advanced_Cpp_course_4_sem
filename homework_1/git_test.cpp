@@ -8,6 +8,6 @@ int main() {
     std::cout << "hey!";
     int a = 0;
     int b = 0;
-    std::cout << "Goodbye!";
+    std::cout << "Goodbye, my friend!";
     return 0;
 };
