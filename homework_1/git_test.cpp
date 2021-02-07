@@ -4,7 +4,7 @@
 
 int main() {
     int c;
-    std::cout << "HI, Git!";
+    std::cout << "Hello, Git!";
     std::cout << "hey!";
     int a = 0;
     int b = 0;
