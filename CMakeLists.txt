@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.17)
+project(Advanced_Cpp_course_4_sem)
+
+set(CMAKE_CXX_STANDARD 20)
+
+add_subdirectory(homework_1)
