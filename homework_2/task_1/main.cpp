@@ -89,5 +89,8 @@ int main(){
 
     to_csv(vector_capacity_3, "../graphics/plot_4.csv");
 
+//  when reserving more and more memory capacity is exactly the same as
+//  reserve size, when decreasing reserve size capacity remains the same.
+
     return 0;
 }
