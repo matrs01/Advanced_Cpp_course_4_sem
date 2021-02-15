@@ -1,6 +1,9 @@
 #ifndef ADVANCED_CPP_COURSE_4_SEM_TIMER_H
 #define ADVANCED_CPP_COURSE_4_SEM_TIMER_H
-
+#include <iostream>
+#include <chrono>
+#include <algorithm>
+#include <vector>
 
 class Timer{
 public:
