@@ -30,6 +30,11 @@ public:
             stopped = false;
         }
     }
+    int GetTime() {
+        auto end = clock_time::now();
+        return std::chrono::duration_cast<
+                std::chrono::nanoseconds> (time_period + (end-m_begin)*(1-stopped)).count();
+    }
 
 private:
     time_point_t m_begin;
