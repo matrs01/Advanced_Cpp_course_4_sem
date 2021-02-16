@@ -28,7 +28,7 @@ double TimeIteration(T v, void (*f)(F)) {
 }
 
 template <typename T, typename F>
-double TimeIt(const T & v, void (*f)(F), size_t num_iterations){
+double TimeIt(const T & v, F f, size_t num_iterations){
     double av_time = 0;
     for (int i = 0U; i < num_iterations; ++i) {
         av_time += TimeIteration(v, f);
@@ -64,29 +64,28 @@ int main() {
     std::uniform_int_distribution<int> distribution(0, 100000);
     std::random_device random_device;
     std::mt19937 engine {random_device()};
-    auto generator = std::bind(distribution, engine);
 
-    std::generate_n(vec.begin(), num_elements, generator);
-    std::generate_n(list.begin(), num_elements, generator);
-    std::generate_n(f_list.begin(), num_elements, generator);
-    std::generate_n(deque.begin(), num_elements, generator);
-    std::generate_n(arr.begin(), num_elements, generator);
+    std::generate_n(vec.begin(), num_elements, [&engine, &distribution](){return distribution(engine);});
+    std::copy(vec.begin(), vec.end(), list.begin());
+    std::copy(vec.begin(), vec.end(), f_list.begin());
+    std::copy(vec.begin(), vec.end(), deque.begin());
+    std::copy(vec.begin(), vec.end(), arr.begin());
 
     size_t t_vector = TimeIt(vec,
                               SortWithStdFunction<std::vector< int >>,
-                              10000);
+                              1000);
     size_t t_array = TimeIt(arr,
                               SortWithStdFunction<std::array<int, num_elements>>,
-                              10000);
+                              1000);
     size_t t_list = TimeIt(list,
                               SortWithInbuiltFunction<std::list< int >>,
-                              10000);
+                              1000);
     size_t t_f_list = TimeIt(f_list,
                               SortWithInbuiltFunction<std::forward_list< int >>,
-                             10000);
+                             1000);
     size_t t_deque = TimeIt(deque,
                               SortWithStdFunction<std::deque< int >>,
-                              10000);
+                              1000);
     std::fstream f;
     f.open("../statistics/table.csv", std::ofstream::out);
     f << "Container" << ',' << "Sorting time, nano sec" << '\n' << "vector" << ',' <<
