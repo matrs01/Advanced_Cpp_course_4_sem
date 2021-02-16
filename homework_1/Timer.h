@@ -11,12 +11,8 @@ public:
     using time_point_t = clock_time::time_point;
     using time_duration = std::chrono::nanoseconds;
     Timer() : m_begin(clock_time::now()) {};
-    ~Timer(){
-        auto end = clock_time::now();
 
-        std::cout<<"nanoseconds: "<<std::chrono::duration_cast<
-                std::chrono::nanoseconds> (time_period + (end-m_begin)*(1-stopped)).count() << std::endl;
-    }
+//    virtual ~Timer() = 0;
     void StopTimer() {
         auto end = clock_time::now();
         if (!stopped){
