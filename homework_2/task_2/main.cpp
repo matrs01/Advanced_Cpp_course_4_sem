@@ -28,7 +28,7 @@ double TimeIteration(T v, void (*f)(F)) {
 }
 
 template <typename T, typename F>
-double TimeIt(T & v, void (*f)(F), size_t num_iterations){
+double TimeIt(const T & v, void (*f)(F), size_t num_iterations){
     double av_time = 0;
     for (int i = 0U; i < num_iterations; ++i) {
         av_time += TimeIteration(v, f);
@@ -37,6 +37,19 @@ double TimeIt(T & v, void (*f)(F), size_t num_iterations){
 }
 
 int main() {
+    /*
+     *  Создаем экземпляры классов std::vector, std::list, std::forward_list,
+     *  std::deque и std::array и заполняем их одинаковыми наборами рандомных
+     *  чисел. Функция TimeIt замеряет среднее время num_iterations замеров
+     *  работы функции f, которую она принимает как аргумент, и мы будем подавать
+     *  туда функции сортировки. TimeIt вызывает функцию TimeIteration для замера
+     *  времени одной итерации, эта функция копирует контейнер перед применением
+     *  функции-фргумента f, чтобы не портить данные в контейнере.
+     *  По результатам замера лучшее время показали std::list и std::forward_list,
+     *  после них идет std::array (но это немного нечестно, так как он полностью
+     *  на стэке), затем идет std::vector и с большим отставанием (пости на порядок)
+     *  идет std::deque (см. таблицу в statistics/table.pdf)
+     */
     constexpr size_t num_elements = 100000;
     std::vector < int > vec (num_elements, 0);
     std::list < int > list {};

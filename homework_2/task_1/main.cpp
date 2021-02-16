@@ -92,5 +92,6 @@ int main(){
 //  when reserving more and more memory capacity is exactly the same as
 //  reserve size, when decreasing reserve size capacity remains the same.
 
+//  see results in graphics/plot.pdf
     return 0;
 }
