@@ -5,4 +5,5 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_subdirectory(task_1)
 add_subdirectory(task_2)
+add_subdirectory(task_3)
 add_executable(homework_2 main.cpp)
