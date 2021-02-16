@@ -21,7 +21,7 @@ void SortWithStdFunction(T & v) {
 }
 
 template<typename T, typename F>
-double TimeIteration(T v, void (*f)(F)) {
+double TimeIteration(T v, F f) {
     Timer t{};
     f(v);
     return t.GetTime();
