@@ -1,6 +1,6 @@
-Container,Sorting time, nano sec
-vector,66940108
-array,44370561
-list,43395882
-forward list,44669276
-deque,182834381
+Container,Sorting time (nano sec)
+vector,9744030
+array,8456800
+list,22064260
+forward list,23342320
+deque,10340340
