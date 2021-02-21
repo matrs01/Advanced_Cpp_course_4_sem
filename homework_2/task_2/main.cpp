@@ -85,10 +85,10 @@ int main() {
                              1000);
     size_t t_deque = TimeIt(deque,
                               SortWithStdFunction<std::deque< int >>,
-                              1000);
+                              100);
     std::fstream f;
     f.open("../statistics/table.csv", std::ofstream::out);
-    f << "Container" << ',' << "Sorting time, nano sec" << '\n' << "vector" << ',' <<
+    f << "Container" << ',' << "Sorting time (nano sec)" << '\n' << "vector" << ',' <<
     t_vector << '\n' << "array" << ',' << t_array << '\n' << "list" << ',' <<
     t_list << '\n' << "forward list" << ',' << t_f_list << '\n' << "deque" << ',' << t_deque << '\n';
 
