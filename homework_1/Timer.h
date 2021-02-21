@@ -12,7 +12,7 @@ public:
     using time_duration = std::chrono::nanoseconds;
     Timer() : m_begin(clock_time::now()) {};
 
-//    virtual ~Timer() = 0;
+//    virtual ~Timer() = default;
     void StopTimer() {
         auto end = clock_time::now();
         if (!stopped){
@@ -26,10 +26,17 @@ public:
             stopped = false;
         }
     }
-    int GetTime() {
+    int64_t GetTime() {
         auto end = clock_time::now();
         return std::chrono::duration_cast<
-                std::chrono::nanoseconds> (time_period + (end-m_begin)*(1-stopped)).count();
+                std::chrono::microseconds> (time_period + (end-m_begin)*(1-stopped)).count();
+    }
+    void Clear() {
+        if (!stopped)
+        {
+            stopped = true;
+            time_period = clock_time::duration::zero();
+        }
     }
 
 private:
