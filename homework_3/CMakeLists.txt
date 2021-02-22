@@ -5,3 +5,4 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_subdirectory(vector_with_sort_vs_set)
 add_subdirectory(my_hash_for_double)
+add_subdirectory(hash_function_from_boost_test)
