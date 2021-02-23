@@ -175,11 +175,10 @@ auto TestHashFunction(F f, const std::string & hash_name)
     std::vector < int >  occupancy_stat (hash_size, 0);
     std::set < std::string > strings {};
     std::string temp_str;
-//    std::vector < int > hash_vec (hash_size, 0);
     size_t num_of_strings = 100;
     size_t num_collisions = 0;
 
-    std::vector < std::string > alphabet {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+    const std::vector < std::string > alphabet {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
                                           "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", " "};
 
 
@@ -237,7 +236,15 @@ void to_csv(const std::vector < std::tuple < std::vector < std::pair < double, i
 
 int main()
 {
-    std::vector < std::tuple < std::vector < std::pair < double, int > >, std::vector < int >, std::string > > stats;
+    /*
+     * Функция TestHashFunction тестирует хэш-функцию на рандомных неповторяющихся строрках,
+     * которые генерируются с помощью функции GenerateNRandomStrings.
+     * Результаты сравнения можно посмотреть в statistics/collisions_stat.pdf
+     * Равномерность отображений можно посмотреть в statistics/occupancy_stat.pdf
+     */
+    std::vector < std::tuple < std::vector < std::pair < double, int > >,
+                    std::vector < int >, std::string > > stats;
+
     stats.push_back(TestHashFunction(RSHash, "RSHash"));
     stats.push_back(TestHashFunction(JSHash, "JSHash"));
     stats.push_back(TestHashFunction(PJWHash, "PJWHash"));
