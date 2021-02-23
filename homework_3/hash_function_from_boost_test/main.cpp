@@ -147,7 +147,7 @@ int main(int argc, char ** argv)
         marks = GenerateNRandomNumbers(num_of_instances, -10000, 10000);
         names = GenerateNRandomNames(num_of_instances, alphabet, 6);
         auto names_iter = names.begin();
-        for (size_t i{}; i < num_of_instances; ++i)
+        for (size_t i{}; i < 100; ++i)
         {
             Customer customer = Customer(*(names_iter++), marks[i]);
             hash_vec[hasher(customer) % hash_size] += 1;
@@ -157,7 +157,7 @@ int main(int argc, char ** argv)
         {
             num_collisions += ((x > 0) ? x-1 : 0);
         }
-        f << num_of_instances << ',' << num_collisions << '\n';
+        f << static_cast < double >(num_of_instances) / hash_size << ',' << num_collisions << '\n';
         num_of_instances += 100;
     }
     std::fstream g;
