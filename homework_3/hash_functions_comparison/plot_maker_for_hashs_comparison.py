@@ -41,4 +41,7 @@ for i in range(3):
     for j in range(3):
         ax[i, j].bar([i for i in range(len(occupancy_stat[i+j][1:]))], occupancy_stat[i+j][1:], width=0.6)
         ax[i, j].title.set_text(occupancy_stat[i+j][0])
+        ax[i, j].set_ylabel("number_of_elements_in_bucket")
+        ax[i, j].set_xlabel("bucket_index")
+
 plt.savefig("statistics/occupancy_stat.pdf")
