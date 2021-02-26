@@ -32,10 +32,10 @@ std::size_t hash_value(const Types & ... args) noexcept
     return seed;
 }
 
-std::set < int > GenerateNRandomNumbers(size_t N, int min, int max)
+std::unordered_set < int > GenerateNRandomNumbers(size_t N, int min, int max)
 {
 //  Generating random numbers without repeating:
-    std::set < int > s {};
+    std::unordered_set < int > s {};
     static std::uniform_int_distribution<int> distribution(min, max);
     static std::random_device random_device;
     static std::mt19937 engine {random_device()};
@@ -45,11 +45,11 @@ std::set < int > GenerateNRandomNumbers(size_t N, int min, int max)
     return s;
 }
 
-std::set < std::string > GenerateNRandomNames(size_t N,
+std::unordered_set < std::string > GenerateNRandomNames(size_t N,
                                               const std::string & alphabet,
                                               size_t name_length)
 {
-    std::set < std::string > s {};
+    std::unordered_set < std::string > s {};
     static std::uniform_int_distribution<int> distribution(0, alphabet.size()-1);
     static std::random_device random_device;
     static std::mt19937 engine {random_device()};
@@ -63,14 +63,20 @@ std::set < std::string > GenerateNRandomNames(size_t N,
 }
 
 int main(){
+    /*
+     * Функция GenerateNRandomNumbers генерирует случайные неповторяющиеся числа, GenerateNRandomNames -
+     * случайные неповторяющиеся имена. Далее имя+число хэшируется и вставляется в set. В случае, если
+     * в set уже есть такой хэш-код, инкрементируеся num_collisions. Каждые save_interval вставок
+     * пара {i, num_collisions} записывается в csv файл, где i - количество вставок.
+     */
     std::string alphabet = "abcdefghijklmnopqrstuvwxyz";
     const size_t num_instances = 10000000;
     const size_t save_interval = 500000;
     const size_t name_length = 6;
-    std::set < int > random_numbers = GenerateNRandomNumbers(num_instances,
+    std::unordered_set < int > random_numbers = GenerateNRandomNumbers(num_instances,
                                                              std::numeric_limits <int>::min(),
                                                              std::numeric_limits <int>::max());
-    std::set < std::string > random_names = GenerateNRandomNames(num_instances, alphabet, name_length);
+    std::unordered_set < std::string > random_names = GenerateNRandomNames(num_instances, alphabet, name_length);
     std::set < std::size_t > hash_set {};
     size_t num_collisions = 0U;
     auto name_it = random_names.begin();

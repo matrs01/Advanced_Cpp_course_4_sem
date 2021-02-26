@@ -211,11 +211,21 @@ void to_csv(const std::vector < std::pair < std::vector < std::pair < size_t, si
 }
 
 int main(){
+    /*
+     * Функция GenerateNRandomStrings генерирует num_instances слуяайных неповторяющихся строк
+     * длины string_length. Эта функция возвращает unordered_set, так как некоторые хэш-функции
+     * оказались чувствительными к порядку подачи строк (как в случае с set).
+     * Результаты в /statistics/plot.pdf
+     */
     std::string alphabet = "abcdefghijklmnopqrstuvwxyz";
     const size_t num_instances = 10000000;
     const size_t string_length = 10;
-    std::unordered_set < std::string > random_strings = GenerateNRandomStrings(num_instances, alphabet, string_length);
-    std::vector < std::pair < std::vector < std::pair < size_t, size_t > >, std::string > > stat;
+    using crds_t = std::pair <size_t, size_t >;
+    using plot_data_t = std::pair < std::vector < crds_t >, std::string >;
+    std::unordered_set < std::string > random_strings = GenerateNRandomStrings(num_instances,
+                                                                               alphabet,
+                                                                               string_length);
+    std::vector < plot_data_t > stat;
     stat.push_back(TestHashFunction(RSHash, "RSHash", random_strings));
     stat.push_back(TestHashFunction(JSHash, "JSHash", random_strings));
     stat.push_back(TestHashFunction(PJWHash, "PJWHash", random_strings));
