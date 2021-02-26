@@ -38,7 +38,7 @@ std::set < int > GenerateNRandomNumbers(size_t N, int min, int max)
     std::set < int > s {};
     static std::uniform_int_distribution<int> distribution(min, max);
     static std::random_device random_device;
-    std::mt19937 engine {random_device()};
+    static std::mt19937 engine {random_device()};
     while (s.size() < N) {
         s.insert(distribution(engine));
     }
@@ -50,9 +50,9 @@ std::set < std::string > GenerateNRandomNames(size_t N,
                                               size_t name_length)
 {
     std::set < std::string > s {};
-    std::uniform_int_distribution<int> distribution(0, alphabet.size()-1);
-    std::random_device random_device;
-    std::mt19937 engine {random_device()};
+    static std::uniform_int_distribution<int> distribution(0, alphabet.size()-1);
+    static std::random_device random_device;
+    static std::mt19937 engine {random_device()};
     std::string name(name_length, '_');
     while (s.size() < N)
     {
