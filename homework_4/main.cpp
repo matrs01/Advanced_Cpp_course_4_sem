@@ -45,8 +45,8 @@ int main(){
 
 //    task 3:
     file << "Перемешаем p1 случайным образом.\n";
-    static std::random_device random_device{};
-    static std::mt19937 engine (random_device());
+    std::random_device random_device{};
+    std::mt19937 engine(random_device());
     std::shuffle(std::begin(p1), std::end(p1), engine);
     file << "p1: ";
     print(p1, file);
@@ -54,61 +54,51 @@ int main(){
 //    task 4:
     file << "Удалим дубликаты из p1.\n";
     std::sort(p1.begin(), p1.end());
-    p1.erase(std::unique(std::begin(p1), std::end(p1)), p1.end());
+    p1.erase(std::unique(std::begin(p1), std::end(p1)), std::end(p1));
     file << "p1: ";
     print(p1, file);
 
 //    task 5:
     file << "Подсчитаем количество нечетных чисел в p1.\n";
-    file << std::count_if(std::cbegin(p1), std::cend(p1), [](auto x){return (std::abs(x) % 2 ==1);}) << '\n';
+    file << std::count_if(std::cbegin(p1), std::cend(p1), [](auto x) { return (std::abs(x) % 2 == 1); }) << '\n';
 
 //    task 6:
     file << "Определим минимальный и максимальный элеиент в p1.\n";
-    const auto [min, max] = std::minmax_element(std::cbegin(p1), std::cend(p1));
+    const auto[min, max] = std::minmax_element(std::cbegin(p1), std::cend(p1));
     file << "min value: " << *min << "; max value: " << *max << '\n';
 
 //    task 7:
-    file << "Найдем простые числа в p1.\n";
-    bool prime_number_found = false;
-    std::for_each(std::cbegin(p1), std::cend(p1), [&](auto x){
-        if (x == 2)
-        {
-            file << x << ' ';
-            prime_number_found = true;
-        }
-        else if (x < 2 || x % 2 == 0)
-        {
-            return 0;
-        }
-        else
-        {
-            for (auto i = 3U; i <= static_cast < int > (std::sqrt(x)); i+=2)
-            {
-                if (x % i == 0)
-                {
-                    return 0;
+    file << "Найдем первое простое число в p1.\n";
+    auto prime = std::find_if(std::cbegin(p1), std::cend(p1), [](auto x) {
+        if (x == 2) {
+            return true;
+        } else if (x < 2 || x % 2 == 0) {
+            return false;
+        } else {
+            for (size_t i{3}; i < static_cast<int>(std::sqrt(x)) + 1; i += 2) {
+                if (x % i == 0) {
+                    return false;
                 }
             }
-            file << x << ' ';
-            prime_number_found = true;
+            return true;
         }
     });
-    if (!prime_number_found)
-    {
-        file << "Простых чисел не нашлось.";
+    if (prime != std::end(p1)) {
+        file << *prime << '\n';
+    } else {
+        file << "Prime number not found.\n";
     }
-    file << '\n';
 
 //    task 8:
     file << "Заменим все числа в p1 их квалратами.\n";
-    std::transform(std::begin(p1), std::end(p1), std::begin(p1), [](auto x){return x*x;});
+    std::transform(std::begin(p1), std::end(p1), std::begin(p1), [](auto x) { return x * x; });
     print(p1, file);
 
 //    task 9:
     file << "Создадим последовательность p2 из N случайных чисел, где N - длина p1.\n";
-    static std::uniform_int_distribution < int > generator (-100, 100);
-    std::vector < int > p2 (p1.size());
-    std::generate(std::begin(p2), std::end(p2), [](){return generator(engine);});
+    std::uniform_int_distribution<int> generator(-100, 100);
+    std::vector<int> p2(p1.size());
+    std::generate(std::begin(p2), std::end(p2), [&]() { return generator(engine); });
     file << "p2: ";
     print(p2, file);
 
@@ -124,9 +114,9 @@ int main(){
 
 //    task 12:
     file << "Создадим последовательномть p3 как разность p1 и p2.\n";
-    std::vector < int > p3(p1.size());
+    std::vector<int> p3;
     std::transform(std::cbegin(p1), std::cend(p1), std::cbegin(p2),
-                   std::begin(p3), [](auto x, auto y){return x-y;});
+                   std::back_inserter(p3), std::minus<>());
     file << "p1: ";
     print(p1, file);
     file << "p2: ";
