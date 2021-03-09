@@ -6,3 +6,5 @@ set(CMAKE_CXX_STANDARD 20)
 add_subdirectory(currency_converter)
 add_subdirectory(transliteration)
 add_subdirectory(email_address_search)
+add_subdirectory(date_search)
+
