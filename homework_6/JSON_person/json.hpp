@@ -122,11 +122,11 @@ namespace detail
 /// struct to capture the start position of the current token
 struct position_t
 {
-/// the total number of characters read
+/// the total number of characters read_file
 std::size_t chars_read_total = 0;
-/// the number of characters read in the current line
+/// the number of characters read_file in the current line
 std::size_t chars_read_current_line = 0;
-/// the number of lines read
+/// the number of lines read_file
 std::size_t lines_read = 0;
 
 /// conversion to size_t to preserve SAX interface
@@ -2860,7 +2860,7 @@ This exception is thrown by the library when a parse error occurs. Parse errors
 can occur during the deserialization of JSON text, CBOR, MessagePack, as well
 as when using JSON Patch.
 
-Member @a byte holds the byte index of the last read character in the input
+Member @a byte holds the byte index of the last read_file character in the input
 file.
 
 Exceptions have ids 1xx.
@@ -2876,9 +2876,9 @@ json.exception.parse_error.106 | parse error: array index '01' must not begin wi
 json.exception.parse_error.107 | parse error: JSON pointer must be empty or begin with '/' - was: 'foo' | A JSON Pointer must be a Unicode string containing a sequence of zero or more reference tokens, each prefixed by a `/` character.
 json.exception.parse_error.108 | parse error: escape character '~' must be followed with '0' or '1' | In a JSON Pointer, only `~0` and `~1` are valid escape sequences.
 json.exception.parse_error.109 | parse error: array index 'one' is not a number | A JSON Pointer array index must be a number.
-json.exception.parse_error.110 | parse error at 1: cannot read 2 bytes from vector | When parsing CBOR or MessagePack, the byte vector ends before the complete value has been read.
-json.exception.parse_error.112 | parse error at 1: error reading CBOR; last byte: 0xF8 | Not all types of CBOR or MessagePack are supported. This exception occurs if an unsupported byte was read.
-json.exception.parse_error.113 | parse error at 2: expected a CBOR string; last byte: 0x98 | While parsing a map key, a value that is not a string has been read.
+json.exception.parse_error.110 | parse error at 1: cannot read_file 2 bytes from vector | When parsing CBOR or MessagePack, the byte vector ends before the complete value has been read.
+json.exception.parse_error.112 | parse error at 1: error reading CBOR; last byte: 0xF8 | Not all types of CBOR or MessagePack are supported. This exception occurs if an unsupported byte was read_file.
+json.exception.parse_error.113 | parse error at 2: expected a CBOR string; last byte: 0x98 | While parsing a map key, a value that is not a string has been read_file.
 json.exception.parse_error.114 | parse error: Unsupported BSON record type 0x0F | The parsing of the corresponding BSON record type is not implemented (yet).
 
 @note For an input with n bytes, 1 is the index of the first character and n+1
@@ -2928,7 +2928,7 @@ return parse_error(id_, byte_, w.c_str());
 /*!
     @brief byte index of the parse error
 
-    The byte index of the last read character in the input file.
+    The byte index of the last read_file character in the input file.
 
     @note For an input with n bytes, 1 is the index of the first character and
           n+1 is the index of the terminating null byte or the end of file.
@@ -3069,7 +3069,7 @@ Exceptions have ids 4xx.
 name / id                       | example message | description
 ------------------------------- | --------------- | -------------------------
 json.exception.out_of_range.401 | array index 3 is out of range | The provided array index @a i is larger than @a size-1.
-json.exception.out_of_range.402 | array index '-' (3) is out of range | The special array index `-` in a JSON Pointer never describes a valid element of the array, but the index past the end. That is, it can only be used to add elements at this position, but not to read it.
+json.exception.out_of_range.402 | array index '-' (3) is out of range | The special array index `-` in a JSON Pointer never describes a valid element of the array, but the index past the end. That is, it can only be used to add elements at this position, but not to read_file it.
 json.exception.out_of_range.403 | key 'foo' not found | The provided key was not found in the JSON object.
 json.exception.out_of_range.404 | unresolved reference token 'foo' | A reference token in a JSON Pointer could not be resolved.
 json.exception.out_of_range.405 | JSON pointer has no parent | The JSON Patch operations 'remove' and 'add' can not be applied to the root element of the JSON value.
@@ -4883,7 +4883,7 @@ struct adl_serializer
     This function is usually called by the `get()` function of the
     @ref basic_json class (either explicit or via conversion operators).
 
-    @param[in] j        JSON value to read from
+    @param[in] j        JSON value to read_file from
     @param[in,out] val  value to write to
     */
 template<typename BasicJsonType, typename ValueType>
@@ -4901,7 +4901,7 @@ noexcept(::nlohmann::from_json(std::forward<BasicJsonType>(j), val)))
     class.
 
     @param[in,out] j  JSON value to write to
-    @param[in] val    value to read from
+    @param[in] val    value to read_file from
     */
 template <typename BasicJsonType, typename ValueType>
 static auto to_json(BasicJsonType& j, ValueType&& val) noexcept(
@@ -5018,7 +5018,7 @@ virtual ~input_adapter_protocol() = default;
 using input_adapter_t = std::shared_ptr<input_adapter_protocol>;
 
 /*!
-Input adapter for stdio file access. This adapter read only 1 byte and do not use any
+Input adapter for stdio file access. This adapter read_file only 1 byte and do not use any
  buffer. This adapter is a very low level adapter.
 */
 class file_input_adapter :
@@ -5044,7 +5044,7 @@ return std::fgetc(m_file);
 }
 
 private:
-/// the file pointer to read from
+/// the file pointer to read_file from
 std::FILE* m_file;
 };
 
@@ -5472,34 +5472,34 @@ using number_float_t = typename BasicJsonType::number_float_t;
 using string_t = typename BasicJsonType::string_t;
 
 /*!
-    @brief a null value was read
+    @brief a null value was read_file
     @return whether parsing should proceed
     */
 virtual bool null() = 0;
 
 /*!
-    @brief a boolean value was read
+    @brief a boolean value was read_file
     @param[in] val  boolean value
     @return whether parsing should proceed
     */
 virtual bool boolean(bool val) = 0;
 
 /*!
-    @brief an integer number was read
+    @brief an integer number was read_file
     @param[in] val  integer value
     @return whether parsing should proceed
     */
 virtual bool number_integer(number_integer_t val) = 0;
 
 /*!
-    @brief an unsigned integer number was read
+    @brief an unsigned integer number was read_file
     @param[in] val  unsigned integer value
     @return whether parsing should proceed
     */
 virtual bool number_unsigned(number_unsigned_t val) = 0;
 
 /*!
-    @brief an floating-point number was read
+    @brief an floating-point number was read_file
     @param[in] val  floating-point value
     @param[in] s    raw token value
     @return whether parsing should proceed
@@ -5507,7 +5507,7 @@ virtual bool number_unsigned(number_unsigned_t val) = 0;
 virtual bool number_float(number_float_t val, const string_t& s) = 0;
 
 /*!
-    @brief a string was read
+    @brief a string was read_file
     @param[in] val  string value
     @return whether parsing should proceed
     @note It is safe to move the passed string.
@@ -5515,7 +5515,7 @@ virtual bool number_float(number_float_t val, const string_t& s) = 0;
 virtual bool string(string_t& val) = 0;
 
 /*!
-    @brief the beginning of an object was read
+    @brief the beginning of an object was read_file
     @param[in] elements  number of object elements or -1 if unknown
     @return whether parsing should proceed
     @note binary formats may report the number of elements
@@ -5523,7 +5523,7 @@ virtual bool string(string_t& val) = 0;
 virtual bool start_object(std::size_t elements) = 0;
 
 /*!
-    @brief an object key was read
+    @brief an object key was read_file
     @param[in] val  object key
     @return whether parsing should proceed
     @note It is safe to move the passed string.
@@ -5531,13 +5531,13 @@ virtual bool start_object(std::size_t elements) = 0;
 virtual bool key(string_t& val) = 0;
 
 /*!
-    @brief the end of an object was read
+    @brief the end of an object was read_file
     @return whether parsing should proceed
     */
 virtual bool end_object() = 0;
 
 /*!
-    @brief the beginning of an array was read
+    @brief the beginning of an array was read_file
     @param[in] elements  number of array elements or -1 if unknown
     @return whether parsing should proceed
     @note binary formats may report the number of elements
@@ -5545,7 +5545,7 @@ virtual bool end_object() = 0;
 virtual bool start_array(std::size_t elements) = 0;
 
 /*!
-    @brief the end of an array was read
+    @brief the end of an array was read_file
     @return whether parsing should proceed
     */
 virtual bool end_array() = 0;
@@ -5553,7 +5553,7 @@ virtual bool end_array() = 0;
 /*!
     @brief a parse error occurred
     @param[in] position    the position in the input where the error occurs
-    @param[in] last_token  the last read token
+    @param[in] last_token  the last read_file token
     @param[in] ex          an exception object describing the error
     @return whether parsing should proceed (must return false)
     */
@@ -6326,7 +6326,7 @@ public:
 /*!
     @brief create a binary reader
 
-    @param[in] adapter  input adapter to read from
+    @param[in] adapter  input adapter to read_file from
     */
 explicit binary_reader(input_adapter_t adapter) : ia(std::move(adapter))
 {
@@ -6442,7 +6442,7 @@ return sax->end_object();
 
 /*!
     @brief Parses a C-style string from the BSON input.
-    @param[in, out] result  A reference to the string variable where the read
+    @param[in, out] result  A reference to the string variable where the read_file
                             string is to be stored.
     @return `true` if the \x00-byte indicating the end of the string was
              encountered before the EOF; false` indicates an unexpected EOF.
@@ -6471,8 +6471,8 @@ return true;
     @brief Parses a zero-terminated string of length @a len from the BSON
            input.
     @param[in] len  The length (including the zero-byte at the end) of the
-                    string to be read.
-    @param[in, out] result  A reference to the string variable where the read
+                    string to be read_file.
+    @param[in, out] result  A reference to the string variable where the read_file
                             string is to be stored.
     @tparam NumberType The type of the length @a len
     @pre len >= 1
@@ -6494,7 +6494,7 @@ return get_string(input_format_t::bson, len - static_cast<NumberType>(1), result
     @brief Read a BSON document element of the given @a element_type.
     @param[in] element_type The BSON element type, c.f. http://bsonspec.org/spec.html
     @param[in] element_type_parse_position The position in the input stream,
-               where the `element_type` was read.
+               where the `element_type` was read_file.
     @warning Not all BSON element types are supported yet. An unsupported
              @a element_type will give rise to a parse_error.114:
              Unsupported BSON record type 0x...
@@ -6569,7 +6569,7 @@ return sax->parse_error(element_type_parse_position, std::string(cr.data()), par
     indicated with the argument @a is_array which one is expected
     (true --> array, false --> object).
 
-    @param[in] is_array Determines if the element list being read is to be
+    @param[in] is_array Determines if the element list being read_file is to be
                         treated as an object (@a is_array == false), or as an
                         array (@a is_array == true).
     @return whether a valid BSON-object/array was passed to the SAX parser
@@ -6635,7 +6635,7 @@ return sax->end_array();
 
 /*!
     @param[in] get_char  whether a new character should be retrieved from the
-                         input (true, default) or whether the last read
+                         input (true, default) or whether the last read_file
                          character should be considered instead
 
     @return whether a valid CBOR value was passed to the SAX parser
@@ -7653,7 +7653,7 @@ return sax->end_object();
 
 /*!
     @param[in] get_char  whether a new character should be retrieved from the
-                         input (true, default) or whether the last read
+                         input (true, default) or whether the last read_file
                          character should be considered instead
 
     @return whether a valid UBJSON value was passed to the SAX parser
@@ -7672,7 +7672,7 @@ return get_ubjson_value(get_char ? get_ignore_noop() : current);
 
     @param[out] result   created string
     @param[in] get_char  whether a new character should be retrieved from the
-                         input (true, default) or whether the last read
+                         input (true, default) or whether the last read_file
                          character should be considered instead
 
     @return whether string creation completed
@@ -7846,7 +7846,7 @@ return true;
 }
 
 /*!
-    @param prefix  the previously read or set type prefix
+    @param prefix  the previously read_file or set type prefix
     @return whether value creation completed
     */
 bool get_ubjson_value(const int prefix)
@@ -8090,7 +8090,7 @@ return sax->end_object();
     not throw in case the input reached EOF, but returns a -'ve valued
     `std::char_traits<char>::eof()` in that case.
 
-    @return character read from the input
+    @return character read_file from the input
     */
 int get()
 {
@@ -8099,7 +8099,7 @@ return current = ia->get_character();
 }
 
 /*!
-    @return character read from the input after ignoring all 'N' entries
+    @return character read_file from the input after ignoring all 'N' entries
     */
 int get_ignore_noop()
 {
@@ -8113,7 +8113,7 @@ return current;
 }
 
 /*
-    @brief read a number from the input
+    @brief read_file a number from the input
 
     @tparam NumberType the type of the number
     @param[in] format   the current format (for diagnostics)
@@ -8128,7 +8128,7 @@ return current;
 template<typename NumberType, bool InputIsLittleEndian = false>
 bool get_number(const input_format_t format, NumberType& result)
 {
-// step 1: read input into array with system's byte order
+// step 1: read_file input into array with system's byte order
 std::array<std::uint8_t, sizeof(NumberType)> vec;
 for (std::size_t i = 0; i < sizeof(NumberType); ++i)
 {
@@ -8159,7 +8159,7 @@ return true;
 
     @tparam NumberType the type of the number
     @param[in] format the current format (for diagnostics)
-    @param[in] len number of characters to read
+    @param[in] len number of characters to read_file
     @param[out] result string created by reading @a len bytes
 
     @return whether string creation completed
@@ -8189,7 +8189,7 @@ return success;
 /*!
     @param[in] format   the current format (for diagnostics)
     @param[in] context  further context information (for diagnostics)
-    @return whether the last read character is not EOF
+    @return whether the last read_file character is not EOF
     */
 JSON_HEDLEY_NON_NULL(3)
 bool unexpect_eof(const input_format_t format, const char* context) const
@@ -8203,7 +8203,7 @@ return true;
 }
 
 /*!
-    @return a string representation of the last read byte
+    @return a string representation of the last read_file byte
     */
 std::string get_token_string() const
 {
@@ -8259,7 +8259,7 @@ input_adapter_t ia = nullptr;
 /// the current character
 int current = std::char_traits<char>::eof();
 
-/// the number of characters read
+/// the number of characters read_file
 std::size_t chars_read = 0;
 
 /// whether we can assume little endianess
@@ -9145,7 +9145,7 @@ f = std::strtold(str, endptr);
 
     The function is realized with a deterministic finite state machine derived
     from the grammar described in RFC 7159. Starting in state "init", the
-    input is read and used to determined the next state. Only state "done"
+    input is read_file and used to determined the next state. Only state "done"
     accepts the number. State "error" is a trap state to model errors. In the
     table below, "anything" means any character but the ones listed before.
 
@@ -9163,10 +9163,10 @@ f = std::strtold(str, endptr);
 
     The state machine is realized with one label per state (prefixed with
     "scan_number_") and `goto` statements between them. The state machine
-    contains cycles, but any cycle can be left when EOF is read. Therefore,
+    contains cycles, but any cycle can be left when EOF is read_file. Therefore,
     the function is guaranteed to terminate.
 
-    During scanning, the read bytes are stored in token_buffer. This string is
+    During scanning, the read_file bytes are stored in token_buffer. This string is
     then converted to a signed integer, an unsigned integer, or a
     floating-point number.
 
@@ -9184,7 +9184,7 @@ token_type scan_number()  // lgtm [cpp/use-of-goto]
 reset();
 
 // the type of the parsed number; initially set to unsigned; will be
-// changed if minus sign, decimal point or exponent is read
+// changed if minus sign, decimal point or exponent is read_file
 token_type number_type = token_type::value_unsigned;
 
 // state (init): we just found out we need to scan a number
@@ -9452,7 +9452,7 @@ goto scan_number_done;
 }
 
 scan_number_done:
-// unget the character after the number (we only read it to know that
+// unget the character after the number (we only read_file it to know that
 // we are done scanning a number)
 unget();
 
@@ -9544,7 +9544,7 @@ token_string.push_back(std::char_traits<char>::to_char_type(current));
     `std::char_traits<char>::eof()` in that case.  Stores the scanned characters
     for use in error messages.
 
-    @return character read from the input
+    @return character read_file from the input
     */
 std::char_traits<char>::int_type get()
 {
@@ -9576,12 +9576,12 @@ return current;
 }
 
 /*!
-    @brief unget current character (read it again on next get)
+    @brief unget current character (read_file it again on next get)
 
     We implement unget by setting variable next_unget to true. The input is not
     changed - we just simulate ungetting by modifying chars_read_total,
     chars_read_current_line, and token_string. The next call to get() will
-    behave as if the unget character is read again.
+    behave as if the unget character is read_file again.
     */
 void unget()
 {
@@ -9648,13 +9648,13 @@ return token_buffer;
 // diagnostics
 /////////////////////
 
-/// return position of last read token
+/// return position of last read_file token
 constexpr position_t get_position() const noexcept
 {
 return position;
 }
 
-/// return the last read token (for errors only).  Will never contain EOF
+/// return the last read_file token (for errors only).  Will never contain EOF
 /// (an arbitrary value that is not a valid char value, often -1), because
 /// 255 may legitimately occur.  May contain NUL, which should be escaped.
 std::string get_token_string() const
@@ -9721,7 +9721,7 @@ error_message = "invalid BOM; must be 0xEF 0xBB 0xBF if given";
 return token_type::parse_error;
 }
 
-// read next character and ignore whitespace
+// read_file next character and ignore whitespace
 do
 {
 get();
@@ -9875,15 +9875,15 @@ using token_type = typename lexer_t::token_type;
 public:
 enum class parse_event_t : uint8_t
 {
-/// the parser read `{` and started to process a JSON object
+/// the parser read_file `{` and started to process a JSON object
 object_start,
-/// the parser read `}` and finished processing a JSON object
+/// the parser read_file `}` and finished processing a JSON object
 object_end,
-/// the parser read `[` and started to process a JSON array
+/// the parser read_file `[` and started to process a JSON array
 array_start,
-/// the parser read `]` and finished processing a JSON array
+/// the parser read_file `]` and finished processing a JSON array
 array_end,
-/// the parser read a key of a value in an object
+/// the parser read_file a key of a value in an object
 key,
 /// the parser finished reading a JSON value
 value
@@ -9898,7 +9898,7 @@ const parser_callback_t cb = nullptr,
 const bool allow_exceptions_ = true)
 : callback(cb), m_lexer(std::move(adapter)), allow_exceptions(allow_exceptions_)
 {
-// read first token
+// read_file first token
 get_token();
 }
 
@@ -9920,7 +9920,7 @@ json_sax_dom_callback_parser<BasicJsonType> sdp(result, callback, allow_exceptio
 sax_parse_internal(&sdp);
 result.assert_invariant();
 
-// in strict mode, input must be completely read
+// in strict mode, input must be completely read_file
 if (strict and (get_token() != token_type::end_of_input))
 {
 sdp.parse_error(m_lexer.get_position(),
@@ -9949,7 +9949,7 @@ json_sax_dom_parser<BasicJsonType> sdp(result, allow_exceptions);
 sax_parse_internal(&sdp);
 result.assert_invariant();
 
-// in strict mode, input must be completely read
+// in strict mode, input must be completely read_file
 if (strict and (get_token() != token_type::end_of_input))
 {
 sdp.parse_error(m_lexer.get_position(),
@@ -10302,7 +10302,7 @@ error_msg += "- ";
 
 if (last_token == token_type::parse_error)
 {
-error_msg += std::string(m_lexer.get_error_message()) + "; last read: '" +
+error_msg += std::string(m_lexer.get_error_message()) + "; last read_file: '" +
 m_lexer.get_token_string() + "'";
 }
 else
@@ -10321,7 +10321,7 @@ return error_msg;
 private:
 /// callback function
 const parser_callback_t callback = nullptr;
-/// the type of the last read token
+/// the type of the last read_file token
 token_type last_token = token_type::uninitialized;
 /// the lexer
 lexer_t m_lexer;
@@ -11612,7 +11612,7 @@ static int array_index(const std::string& s)
 std::size_t processed_chars = 0;
 const int res = std::stoi(s, &processed_chars);
 
-// check if the string was completely read
+// check if the string was completely read_file
 if (JSON_HEDLEY_UNLIKELY(processed_chars != s.size()))
 {
 JSON_THROW(detail::out_of_range::create(404, "unresolved reference token '" + s + "'"));
@@ -12072,7 +12072,7 @@ reference_string + "'"));
 }
 
 // extract the reference tokens:
-// - slash: position of the last read slash (or end of string)
+// - slash: position of the last read_file slash (or end of string)
 // - start: position after the previous slash
 for (
 // search for the first slash after the first character
@@ -15589,7 +15589,7 @@ case error_handler_t::ignore:
 case error_handler_t::replace:
 {
 // in case we saw this character the first time, we
-// would like to read it again, because the byte
+// would like to read_file it again, because the byte
 // may be OK for itself, but just not OK for the
 // previous sequence
 if (undumped_chars > 0)
@@ -17134,11 +17134,11 @@ return object.release();
     */
 union json_value
 {
-/// object (stored with pointer to save storage)
+/// object (stored with pointer to save_file storage)
 object_t* object;
-/// array (stored with pointer to save storage)
+/// array (stored with pointer to save_file storage)
 array_t* array;
-/// string (stored with pointer to save storage)
+/// string (stored with pointer to save_file storage)
 string_t* string;
 /// boolean
 boolean_t boolean;
@@ -17372,11 +17372,11 @@ public:
     @brief parser event types
 
     The parser callback distinguishes the following events:
-    - `object_start`: the parser read `{` and started to process a JSON object
-    - `key`: the parser read a key of a value in an object
-    - `object_end`: the parser read `}` and finished processing a JSON object
-    - `array_start`: the parser read `[` and started to process a JSON array
-    - `array_end`: the parser read `]` and finished processing a JSON array
+    - `object_start`: the parser read_file `{` and started to process a JSON object
+    - `key`: the parser read_file a key of a value in an object
+    - `object_end`: the parser read_file `}` and finished processing a JSON object
+    - `array_start`: the parser read_file `[` and started to process a JSON array
+    - `array_end`: the parser read_file `]` and finished processing a JSON array
     - `value`: the parser finished reading a JSON value
 
     @image html callback_events.png "Example when certain parse events are triggered"
@@ -17401,11 +17401,11 @@ using parse_event_t = typename parser::parse_event_t;
 
     parameter @a event | description | parameter @a depth | parameter @a parsed
     ------------------ | ----------- | ------------------ | -------------------
-    parse_event_t::object_start | the parser read `{` and started to process a JSON object | depth of the parent of the JSON object | a JSON value with type discarded
-    parse_event_t::key | the parser read a key of a value in an object | depth of the currently parsed JSON object | a JSON string containing the key
-    parse_event_t::object_end | the parser read `}` and finished processing a JSON object | depth of the parent of the JSON object | the parsed JSON object
-    parse_event_t::array_start | the parser read `[` and started to process a JSON array | depth of the parent of the JSON array | a JSON value with type discarded
-    parse_event_t::array_end | the parser read `]` and finished processing a JSON array | depth of the parent of the JSON array | the parsed JSON array
+    parse_event_t::object_start | the parser read_file `{` and started to process a JSON object | depth of the parent of the JSON object | a JSON value with type discarded
+    parse_event_t::key | the parser read_file a key of a value in an object | depth of the currently parsed JSON object | a JSON string containing the key
+    parse_event_t::object_end | the parser read_file `}` and finished processing a JSON object | depth of the parent of the JSON object | the parsed JSON object
+    parse_event_t::array_start | the parser read_file `[` and started to process a JSON array | depth of the parent of the JSON array | a JSON value with type discarded
+    parse_event_t::array_end | the parser read_file `]` and finished processing a JSON array | depth of the parent of the JSON array | the parsed JSON array
     parse_event_t::value | the parser finished reading a JSON value | depth of the value | the parsed JSON value
 
     @image html callback_events.png "Example when certain parse events are triggered"
@@ -17414,7 +17414,7 @@ using parse_event_t = typename parser::parse_event_t;
     depending on the context in which function was called:
 
     - Discarded values in structured types are skipped. That is, the parser
-      will behave as if the discarded value was never read.
+      will behave as if the discarded value was never read_file.
     - In case a value outside a structured type is skipped, it is replaced
       with `null`. This case happens if the top-level element is skipped.
 
@@ -17485,7 +17485,7 @@ assert_invariant();
 
     Create a `null` JSON value. It either takes a null pointer as parameter
     (explicitly creating `null`) or no parameter (implicitly creating `null`).
-    The passed null pointer itself is not read -- it is only used to choose
+    The passed null pointer itself is not read_file -- it is only used to choose
     the right constructor.
 
     @complexity Constant.
@@ -19245,7 +19245,7 @@ return get<ValueType>();
 
     @since version 1.0.0
 
-    @liveexample{The example below shows how array elements can be read and
+    @liveexample{The example below shows how array elements can be read_file and
     written using `at()`. It also demonstrates the different exceptions that
     can be thrown.,at__size_type}
     */
@@ -19292,7 +19292,7 @@ JSON_THROW(type_error::create(304, "cannot use at() with " + std::string(type_na
 
     @since version 1.0.0
 
-    @liveexample{The example below shows how array elements can be read using
+    @liveexample{The example below shows how array elements can be read_file using
     `at()`. It also demonstrates the different exceptions that can be thrown.,
     at__size_type_const}
     */
@@ -19343,7 +19343,7 @@ JSON_THROW(type_error::create(304, "cannot use at() with " + std::string(type_na
 
     @since version 1.0.0
 
-    @liveexample{The example below shows how object elements can be read and
+    @liveexample{The example below shows how object elements can be read_file and
     written using `at()`. It also demonstrates the different exceptions that
     can be thrown.,at__object_t_key_type}
     */
@@ -19394,7 +19394,7 @@ JSON_THROW(type_error::create(304, "cannot use at() with " + std::string(type_na
 
     @since version 1.0.0
 
-    @liveexample{The example below shows how object elements can be read using
+    @liveexample{The example below shows how object elements can be read_file using
     `at()`. It also demonstrates the different exceptions that can be thrown.,
     at__object_t_key_type_const}
     */
@@ -19438,7 +19438,7 @@ JSON_THROW(type_error::create(304, "cannot use at() with " + std::string(type_na
     @complexity Constant if @a idx is in the range of the array. Otherwise
     linear in `idx - size()`.
 
-    @liveexample{The example below shows how array elements can be read and
+    @liveexample{The example below shows how array elements can be read_file and
     written using `[]` operator. Note the addition of `null`
     values.,operatorarray__size_type}
 
@@ -19485,7 +19485,7 @@ JSON_THROW(type_error::create(305, "cannot use operator[] with a numeric argumen
 
     @complexity Constant.
 
-    @liveexample{The example below shows how array elements can be read using
+    @liveexample{The example below shows how array elements can be read_file using
     the `[]` operator.,operatorarray__size_type_const}
 
     @since version 1.0.0
@@ -19519,7 +19519,7 @@ JSON_THROW(type_error::create(305, "cannot use operator[] with a numeric argumen
 
     @complexity Logarithmic in the size of the container.
 
-    @liveexample{The example below shows how object elements can be read and
+    @liveexample{The example below shows how object elements can be read_file and
     written using the `[]` operator.,operatorarray__key_type}
 
     @sa @ref at(const typename object_t::key_type&) for access by reference
@@ -19548,7 +19548,7 @@ JSON_THROW(type_error::create(305, "cannot use operator[] with a string argument
 }
 
 /*!
-    @brief read-only access specified object element
+    @brief read_file-only access specified object element
 
     Returns a const reference to the element at with specified key @a key. No
     bounds checking is performed.
@@ -19568,7 +19568,7 @@ JSON_THROW(type_error::create(305, "cannot use operator[] with a string argument
 
     @complexity Logarithmic in the size of the container.
 
-    @liveexample{The example below shows how object elements can be read using
+    @liveexample{The example below shows how object elements can be read_file using
     the `[]` operator.,operatorarray__key_type_const}
 
     @sa @ref at(const typename object_t::key_type&) for access by reference
@@ -19607,7 +19607,7 @@ JSON_THROW(type_error::create(305, "cannot use operator[] with a string argument
 
     @complexity Logarithmic in the size of the container.
 
-    @liveexample{The example below shows how object elements can be read and
+    @liveexample{The example below shows how object elements can be read_file and
     written using the `[]` operator.,operatorarray__key_type}
 
     @sa @ref at(const typename object_t::key_type&) for access by reference
@@ -19638,7 +19638,7 @@ JSON_THROW(type_error::create(305, "cannot use operator[] with a string argument
 }
 
 /*!
-    @brief read-only access specified object element
+    @brief read_file-only access specified object element
 
     Returns a const reference to the element at with specified key @a key. No
     bounds checking is performed.
@@ -19658,7 +19658,7 @@ JSON_THROW(type_error::create(305, "cannot use operator[] with a string argument
 
     @complexity Logarithmic in the size of the container.
 
-    @liveexample{The example below shows how object elements can be read using
+    @liveexample{The example below shows how object elements can be read_file using
     the `[]` operator.,operatorarray__key_type_const}
 
     @sa @ref at(const typename object_t::key_type&) for access by reference
@@ -21669,7 +21669,7 @@ m_value.object->insert(first.m_it.object_iterator, last.m_it.object_iterator);
 
     Inserts all values from JSON object @a j and overwrites existing keys.
 
-    @param[in] j  JSON object to read values from
+    @param[in] j  JSON object to read_file values from
 
     @throw type_error.312 if called on JSON values other than objects; example:
     `"cannot use update() with string"`
@@ -22375,7 +22375,7 @@ return basic_json(lhs) >= rhs;
     */
 friend std::ostream& operator<<(std::ostream& o, const basic_json& j)
 {
-// read width member and use it as indentation parameter if nonzero
+// read_file width member and use it as indentation parameter if nonzero
 const bool pretty_print = o.width() > 0;
 const auto indentation = pretty_print ? o.width() : 0;
 
@@ -22439,7 +22439,7 @@ return o << j;
              assertions switched off, the behavior is undefined and will most
              likely yield segmentation violation.
 
-    @param[in] i  input to read from
+    @param[in] i  input to read_file from
     @param[in] cb  a parser callback function of type @ref parser_callback_t
     which is used to control the deserialization by filtering unwanted values
     (optional)
@@ -22519,7 +22519,7 @@ return parser(i).accept(true);
              assertions switched off, the behavior is undefined and will most
              likely yield segmentation violation.
 
-    @param[in] i  input to read from
+    @param[in] i  input to read_file from
     @param[in,out] sax  SAX event listener
     @param[in] format  the format to parse (JSON, CBOR, MessagePack, or UBJSON)
     @param[in] strict  whether the input has to be consumed completely
@@ -22655,7 +22655,7 @@ return operator>>(i, j);
 
     Deserializes an input stream to a JSON value.
 
-    @param[in,out] i  input stream to read a serialized JSON value from
+    @param[in,out] i  input stream to read_file a serialized JSON value from
     @param[in,out] j  JSON value to write the deserialized input to
 
     @throw parse_error.101 in case of an unexpected token
@@ -23393,7 +23393,7 @@ return res ? result : basic_json(value_t::discarded);
 
     UBJSON type | JSON value type                         | marker
     ----------- | --------------------------------------- | ------
-    no-op       | *no value, next value is read*          | `N`
+    no-op       | *no value, next value is read_file*          | `N`
     null        | `null`                                  | `Z`
     false       | `false`                                 | `F`
     true        | `true`                                  | `T`
