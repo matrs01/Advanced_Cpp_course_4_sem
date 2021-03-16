@@ -3,9 +3,7 @@
 #include <string>
 
 int main() {
-//    std::regex pattern(R"(([\-\w]+)@([\w\-]+\.[[:alpha:]]+[_\-.?[:alpha:]+]*))");
     std::regex pattern(R"((([\-\w]+\.)*[\-\w])+@(([[:alpha:]]+\.)+[[:alpha:]]{2,6}))");
-//    std::regex pattern(R"(([\-\w]+)@(([[:alpha:]]+\.)+))");
 
 
     std::string input_str;
