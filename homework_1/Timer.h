@@ -37,6 +37,10 @@ public:
             stopped = true;
             time_period = clock_time::duration::zero();
         }
+        else
+        {
+            time_period = clock_time::duration::zero();
+        }
     }
 
 private:
