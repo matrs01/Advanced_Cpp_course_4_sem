@@ -37,10 +37,15 @@ int main() {
 
     std::cout << "Sequential for_each working:\n";
     std::for_each(std::begin(v), std::end(v), f);
+    std::cout << "Done.\n";
+
+    std::iota(v.begin(), v.end(), 1);
 
     const size_t num_threads = std::thread::hardware_concurrency();
     std::cout << "Parallel for_each working:\n";
     parallel_for_each(std::begin(v), std::end(v), f, (num_threads) ? length/num_threads : length);
+    std::cout << "Done.\n";
+
 
     system("pause");
     return EXIT_SUCCESS;

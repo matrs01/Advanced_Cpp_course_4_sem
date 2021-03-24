@@ -1,0 +1,6 @@
+size,for_each (seq),for_each (par),partial_sum,inclusive_scan,inner_product,transform_reduce
+1000,0,13,0,0,0,10
+10000,0,8,3,3,1,13
+100000,0,9,50,49,24,43
+1000000,0,10,511,492,306,299
+10000000,0,11,5770,5742,4238,3176
