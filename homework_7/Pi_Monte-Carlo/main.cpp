@@ -2,60 +2,68 @@
 #include <random>
 #include <thread>
 #include <future>
+#include <cstdint>
+#include "../../homework_1/Timer.h"
 
 
-auto sequential_algorithm (uint64_t N) {
+auto sequential_algorithm (std::uint64_t N) {
     std::uniform_real_distribution < double > distribution(0.0, 2.0);
-    std::random_device rd;
+    std::random_device rd;  // так как треды создаются неодновременно, эта величина у них будет разная
     std::mt19937 engine(rd());
-    std::vector < double > x (N);
-    std::vector < double > y (N);
-    std::generate(std::begin(x), std::end(x), [&engine, &distribution](){return distribution(engine);});
-    std::generate(std::begin(y), std::end(y), [&engine, &distribution](){return distribution(engine);});
-    std::uint64_t counter {};
-    double dx, dy;
+    std::uint64_t counter = 0;
+    double dx, dy, x, y;
     for (auto i = 0U; i < N; ++i)
     {
-        dx = x[i] - 1.0;
-        dy = y[i] - 1.0;
+        x = distribution(engine);
+        y = distribution(engine);
+        dx = x - 1.0;
+        dy = y - 1.0;
         if (dx*dx + dy*dy <= 1.0)
         {
             counter++;
         }
     }
-    return 4*counter / static_cast < double > (N);
+    return 4.0*counter / N;
 }
 
-auto parallel_algorithm (uint64_t N) {
-    const std::uint64_t min_per_thread = 25;
-    const std::uint64_t max_threads =
-            (N + min_per_thread - 1) / min_per_thread;
-    const std::uint64_t hardware_threads =
-            std::thread::hardware_concurrency();
-    const std::uint64_t num_threads =
-            std::min(hardware_threads != 0 ? hardware_threads : 2, max_threads);
+auto parallel_algorithm (std::uint64_t N) {
+    const std::uint64_t num_threads = std::thread::hardware_concurrency();
     const std::uint64_t block_size = N / num_threads;
     std::vector < std::future < double > > futures(num_threads - 1);
 
     for (auto i = 0U; i < num_threads-1; i++)
     {
-        futures[i] = std::async(sequential_algorithm, block_size);
+        futures[i] = std::async(std::launch::async, sequential_algorithm, block_size);
     }
 //    std::cout << "#######";
     auto last_N = N - block_size*(num_threads-1);
     auto last_res = last_N * sequential_algorithm(last_N);
+    double thread_res = 0;
     for (auto i = 0U; i < num_threads-1; i++)
     {
-        last_res += block_size * futures[i].get();
+        thread_res += futures[i].get();
     }
-    return last_res / static_cast < double > (N);
+    last_res += block_size*thread_res;
+    return 1.0 * last_res / N;
 }
 
 int main() {
     std::cout << "Sequential algorithm working:\n";
-    std::cout << sequential_algorithm(100000000) << std::endl;
+    Timer time;
+    auto pi = sequential_algorithm(100000000);
+    time.StopTimer();
+    std::cout << pi << std::endl;
+    auto sequential_algorithm_time = time.GetTime();
     std::cout << "Parallel algorithm working:\n";
-    std::cout << parallel_algorithm(100000000) << std::endl;
-    system("pause");
+    time.Clear();
+    time.SetTimer();
+    pi = parallel_algorithm(100000000);
+    std::cout << pi << std::endl;
+    time.StopTimer();
+    auto parallel_algorithm_time = time.GetTime();
+    std::cout << "sequential_algorithm_time/parallel_algorithm_time = " << 1.0*sequential_algorithm_time/parallel_algorithm_time;
+    /*
+     * Выигрыш в скорости получается примерно в 6.6 раза.
+     */
     return EXIT_SUCCESS;
 }
