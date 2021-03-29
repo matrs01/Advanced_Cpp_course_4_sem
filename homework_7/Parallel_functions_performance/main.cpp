@@ -3,18 +3,29 @@
 #include <execution>
 #include <cmath>
 #include <fstream>
+#include <future>
 
 #include "../../homework_1/Timer.h"
 
 
 auto measure_for_each(size_t size){
-    std::vector < int > v(size);
-    std::iota(v.begin(), v.end(), 1);
+    std::vector < double > v(size);
+    double temp = 0.0;
+    std::fill_n(v.begin(), size, 1.0);
 
     Timer t;
     t.StopTimer();
 
-    auto f = [](auto x){ std::sin(std::sin(std::tan(1.5 - std::sin(x))));};
+//    auto f = [](auto x){ std::sin(std::sin(std::tan(1.5 - std::sin(x))));};
+    auto f = [&temp](auto x)
+    {
+        auto result = 0.0;
+        for (std::size_t i = 0U; i < 10U; ++i)
+        {
+            result = std::sin(x + result);
+        }
+        temp = result;
+    };
     t.SetTimer();
     std::for_each(std::execution::seq, v.begin(), v.end(), f);
     t.StopTimer();
@@ -31,21 +42,27 @@ auto measure_for_each(size_t size){
 }
 
 auto measure_partial_sum(size_t size){
-    std::vector < int > v(size);
-    std::vector < int > temp(size);
-    std::iota(v.begin(), v.end(), 1);
+    std::vector < double > v(size);
+    std::vector < double > temp(size);
+    std::fill_n(v.begin(), size, 10.0);
+    auto f = [](const auto lhs, const auto rhs)
+    {
+        auto result = 0.0;
+        for (auto i = 0U; i < 100U; ++i)
+        {
+            result = std::sin(lhs + rhs + result);
+        }
+        return result;
+    };
 
     Timer t;
-    t.StopTimer();
-
-    t.SetTimer();
-    std::partial_sum(v.begin(), v.end(), temp.begin());
+    std::partial_sum(v.begin(), v.end(), temp.begin(), f);
     t.StopTimer();
     auto seq_time = t.GetTime();
     t.Clear();
 
     t.SetTimer();
-    std::inclusive_scan(v.begin(), v.end(), temp.begin());
+    std::inclusive_scan(std::execution::par, v.begin(), v.end(), temp.begin(), f);
     t.StopTimer();
     auto par_time = t.GetTime();
     t.Clear();
@@ -58,19 +75,27 @@ auto measure_inner_product(size_t size){
     std::iota(v1.begin(), v1.end(), 1);
     std::vector < int > v2(size);
     std::iota(v2.rbegin(), v2.rend(), 1);
+    auto f = [](const auto lhs, const auto rhs)
+    {
+        auto result = 0.0;
+        for (auto i = 0U; i < 100U; ++i)
+        {
+            result = std::sin(lhs + rhs + result);
+        }
+        return result;
+    };
 
     Timer t;
     t.StopTimer();
 
-    auto f = [](auto x){ std::sin(std::tan(x)*std::cos(x));};
     t.SetTimer();
-    auto ipr1 = std::inner_product(v1.begin(), v1.end(), v2.begin(), 0);
+    auto ipr1 = std::inner_product(v1.begin(), v1.end(), v2.begin(), 0, f, f);
     t.StopTimer();
     auto seq_time = t.GetTime();
     t.Clear();
 
     t.SetTimer();
-    auto ipr2 = std::transform_reduce(std::execution::par, v1.begin(), v1.end(), v2.begin(), 0);
+    auto ipr2 = std::transform_reduce(std::execution::par, v1.begin(), v1.end(), v2.begin(), 0, f, f);
     t.StopTimer();
     auto par_time = t.GetTime();
     t.Clear();
@@ -99,7 +124,7 @@ int main(int argc, char ** argv)
     std::ofstream file("../statistics/data.csv", std::ios::out);
     file << "size,for_each (seq),for_each (par),partial_sum,inclusive_scan,inner_product,transform_reduce\n";
     for (size_t size = 1000; size<100000000; size*=10){
-        size_t repeats = 100;
+        size_t repeats = 10;
         auto for_each_time = average_time(measure_for_each, size, repeats);
         auto part_sum_time = average_time(measure_partial_sum, size, repeats);
         auto inn_prod_time = average_time(measure_inner_product, size, repeats);
