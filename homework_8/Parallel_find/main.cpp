@@ -26,7 +26,7 @@ struct Searcher
         return true;
     }
     void operator()(Iterator first, Iterator last, std::string & element,
-                    std::vector < int > & container, size_t index) noexcept
+                    std::vector < int > & container, size_t index)
     {
         const std::size_t size = element.size();
         for (; (first != last); ++first)
