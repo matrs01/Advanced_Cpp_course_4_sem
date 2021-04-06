@@ -5,7 +5,9 @@
 #include <mutex>
 #include <condition_variable>
 
-template < typename T >
+template < typename T,
+           typename Container = std::vector<T>,
+           typename Compare = std::less<typename Container::value_type>>
 class threadsave_priority_queue {
 public:
 
@@ -88,7 +90,7 @@ public:
 
 private:
 
-    std::priority_queue<T> priority_queue_;
+    std::priority_queue < T, Container, Compare> priority_queue_;
     std::condition_variable condition_variable_;
     mutable std::mutex mutex_;
 };
