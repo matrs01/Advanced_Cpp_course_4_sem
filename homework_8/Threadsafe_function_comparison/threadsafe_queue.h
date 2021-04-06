@@ -34,6 +34,19 @@ public:
         m_condition_variable.notify_one();
     }
 
+    void pop(T & value)
+    {
+        std::unique_lock < std::mutex > lock(m_mutex);
+
+        if (m_queue.empty())
+        {
+            throw std::range_error("empty stack");
+        }
+
+        value = m_queue.front();
+        m_queue.pop();
+    }
+
     void wait_and_pop(T & value)
     {
         std::unique_lock < std::mutex > lock(m_mutex);
@@ -88,6 +101,12 @@ public:
     {
         std::lock_guard < std::mutex > lock(m_mutex);
         return m_queue.empty();
+    }
+
+    size_t size() const
+    {
+        std::lock_guard < std::mutex > lock(m_mutex);
+        return m_queue.size();
     }
 
 private:

@@ -49,7 +49,7 @@ public:
 
     void pop(T & value)
     {
-        std::lock_guard < std::mutex > lock(m_mutex);
+        std::unique_lock < std::mutex > lock(m_mutex);
 
         if (m_data.empty())
         {
@@ -73,6 +73,12 @@ public:
     {
         std::lock_guard < std::mutex > lock(m_mutex);
         return m_data.empty();
+    }
+
+    size_t size() const
+    {
+        std::lock_guard < std::mutex > lock(m_mutex);
+        return m_data.size();
     }
 
 private:

@@ -40,30 +40,6 @@ void push_op_boost (T & container, std::size_t num_iter_per_thread)
     }
 }
 
-template <typename T>
-auto test_boost (T & container, std::size_t num_iter_per_thread)
-{
-    auto num_threads = std::thread::hardware_concurrency();
-//    std::atomic < bool > flag = false;
-    std::vector < std::future < void > > pushers (num_threads/2);
-    std::vector < std::future < void > > popers (num_threads/2 - 1);
-    for (auto & future: pushers)
-    {
-        future = std::async(std::launch::async, push_op_boost < T >, std::ref(container), num_iter_per_thread);
-    }
-    for (auto & future: popers)
-    {
-        future = std::async(std::launch::async, pop_op_boost < T >, std::ref(container), num_iter_per_thread);
-    }
-    Timer time;
-    execution_start.store(true);
-    pop_op_boost(container, num_iter_per_thread);
-    while (!container.empty()){
-        std::this_thread::yield();
-    }
-    time.StopTimer();
-    return time.GetTime();
-}
 
 template <typename T>
 void pop_op_seminar (T & container, std::size_t num_iter_per_thread)
@@ -72,11 +48,11 @@ void pop_op_seminar (T & container, std::size_t num_iter_per_thread)
     {
         std::this_thread::yield();
     }
-    std::size_t counter = 0;
+
     int temp;
     for (auto i = 0U; i < num_iter_per_thread; ++i)
     {
-        container.wait_and_pop(temp);
+        container.pop(temp);
     }
 }
 
@@ -93,38 +69,44 @@ void push_op_seminar (T & container, std::size_t num_iter_per_thread)
     }
 }
 
-template <typename T>
-auto test_seminar (T & container, std::size_t num_iter_per_thread)
+template <typename T, typename F>
+auto test (T & container, std::size_t num_iter_per_thread, F & pop_function, F & push_function)
 {
     auto num_threads = std::thread::hardware_concurrency();
-//    std::atomic < bool > flag = false;
+
     std::vector < std::future < void > > pushers (num_threads/2);
     std::vector < std::future < void > > popers (num_threads/2 - 1);
     for (auto & future: pushers)
     {
-        future = std::async(std::launch::async, push_op_seminar < T >, std::ref(container), num_iter_per_thread);
+        future = std::async(std::launch::async, push_function, std::ref(container), num_iter_per_thread);
     }
     for (auto & future: popers)
     {
-        future = std::async(std::launch::async, pop_op_seminar < T >, std::ref(container), num_iter_per_thread);
+        future = std::async(std::launch::async, pop_function, std::ref(container), num_iter_per_thread);
     }
     Timer time;
     execution_start.store(true);
-    pop_op_seminar(container, num_iter_per_thread);
-    while (!container.empty()){
-        std::this_thread::yield();
+    pop_function(container, num_iter_per_thread);
+
+    for (auto & future: pushers)
+    {
+        future.wait();
+    }
+    for (auto & future: popers)
+    {
+        future.wait();
     }
     time.StopTimer();
     return time.GetTime();
 }
 
-template<typename T, typename F>
-auto time_it (T & container, F f, std::size_t num_iter, std::size_t num_inserts)
+template<typename T, typename F1, typename F2>
+auto time_it (T & container, F1 f, F2 pop_f, F2 push_f, std::size_t num_iter, std::size_t num_inserts)
 {
     Timer time;
     for (auto i = 0U; i < num_iter; ++i)
     {
-        f(container, num_inserts);
+        f(container, num_inserts, pop_f, push_f);
     }
     time.StopTimer();
     return time.GetTime();
@@ -140,17 +122,34 @@ int main(int argc, char** argv)
     boost::lockfree::queue < int > q_1 (size);
     Threadsafe_Stack < int > st_2;
     Threadsafe_Queue < int > q_2;
-//    std::cout << test_boost(st_1, 100);
-//    std::cout << test_seminar(st_2, 100);
-    std::cout << "boost_stack_time = " << time_it(st_1, test_boost <boost::lockfree::stack < int >>,
-                                                  num_iter, inserts) << std::endl;
-    std::cout << "seminar_stack_time = " << time_it(st_2, test_seminar < Threadsafe_Stack < int > >,
-                                                  num_iter, inserts) << std::endl;
+    for (auto i = 0U; i < 10*inserts; ++i)
+    {
+        st_1.push(128);
+        st_2.push(128);
+        q_1.push(128);
+        q_2.push(128);
+    }
 
-    std::cout << "boost_queue_time = " << time_it(q_1, test_boost < boost::lockfree::queue < int > >,
-                                                  num_iter, inserts) << std::endl;
-    std::cout << "seminar_queue_time = " << time_it(q_2, test_seminar < Threadsafe_Queue < int > >,
-                                                  num_iter, inserts) << std::endl;
+    std::cout << "boost_stack_time = " << time_it(st_1, test <boost::lockfree::stack < int >,
+                                                     void (*)(boost::lockfree::stack<int> &, unsigned int)>,
+                                                     pop_op_boost < boost::lockfree::stack < int > >,
+                                                     push_op_boost < boost::lockfree::stack < int > >,
+                                                     num_iter, inserts) << std::endl;
+    std::cout << "seminar_stack_time = " << time_it(st_2, test <Threadsafe_Stack < int >,
+                                                     void (*)(Threadsafe_Stack < int > &, unsigned int)>,
+                                                     pop_op_seminar < Threadsafe_Stack < int > >,
+                                                     push_op_seminar < Threadsafe_Stack < int > >,
+                                                     num_iter, inserts) << std::endl;
+    std::cout << "boost_queue_time = " << time_it(q_1, test <boost::lockfree::queue < int >,
+                                                     void (*)(boost::lockfree::queue<int> &, unsigned int)>,
+                                                     pop_op_boost < boost::lockfree::queue < int > >,
+                                                     push_op_boost < boost::lockfree::queue < int > >,
+                                                     num_iter, inserts) << std::endl;
+    std::cout << "seminar_queue_time = " << time_it(q_2, test <Threadsafe_Queue < int >,
+                                                           void (*)(Threadsafe_Queue < int > &, unsigned int)>,
+                                                     pop_op_seminar < Threadsafe_Queue < int > >,
+                                                     push_op_seminar < Threadsafe_Queue < int > >,
+                                                     num_iter, inserts) << std::endl;
 
     return EXIT_SUCCESS;
 }
