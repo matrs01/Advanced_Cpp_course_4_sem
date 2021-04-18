@@ -36,7 +36,14 @@ void receive_message(std::mutex &m,
         std::scoped_lock lock(m);
 
         while (socket.available()) {
-            auto msg = read_data_until(socket);
+            std::string msg;
+            try {
+                msg = read_data_until(socket);
+            } catch (const boost::system::system_error &er) {
+                std::cout << "Connection is lost!\n";
+                system("pause");
+                exit(1);
+            }
             std::cout << msg << '\n';
         }
     }
@@ -46,7 +53,7 @@ int main(int argc, char ** argv)
 {
     system("chcp 1251");
 
-    std::string raw_ip_address = "127.0.0.1";
+    std::string raw_ip_address = "93.175.6.132";
 
     auto port = 3333;
 
@@ -84,7 +91,13 @@ int main(int argc, char ** argv)
             }
             input += char(4);
             std::scoped_lock lock(m);
-            write_data(socket, input);
+            try {
+                write_data(socket, input);
+            } catch (const boost::system::system_error &er) {
+                std::cout << "Connection is lost!\n";
+                system("pause");
+                exit(1);
+            }
         }
 
         try{
