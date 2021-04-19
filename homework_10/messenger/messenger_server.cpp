@@ -14,28 +14,6 @@
 #include <boost/asio.hpp>
 
 
-std::string read_data_until(boost::asio::ip::tcp::socket & socket)
-{
-    boost::asio::streambuf buffer;
-
-    boost::asio::read_until(socket, buffer, char(4));
-
-    std::string message;
-
-    // Because buffer 'buf' may contain some other data
-    // after '\n' symbol, we have to parse the buffer and
-    // extract only symbols before the delimiter.
-    std::istream input_stream(&buffer);
-    std::getline(input_stream, message, char(4));
-
-    return message;
-}
-
-void write_data(boost::asio::ip::tcp::socket & socket, const std::string &data)
-{
-    boost::asio::write(socket, boost::asio::buffer(data));
-}
-
 
 class User{
 public:
@@ -54,7 +32,7 @@ public:
     auto get_name() const{ return name_; }
     auto get_ip() const{ return socket_.remote_endpoint().address().to_string(); }
 
-    bool operator==(const User &u){ return id_ == u.id_; }
+    bool operator==(const User &u) const{ return id_ == u.id_; }
 
 private:
     size_t id_;
@@ -70,6 +48,28 @@ public:
     explicit Session(boost::asio::ip::tcp::endpoint endpoint) : endpoint_(std::move(endpoint)){
         acceptor_.bind(endpoint_);
     };
+
+    static void write_data(boost::asio::ip::tcp::socket & socket, const std::string &data)
+    {
+        boost::asio::write(socket, boost::asio::buffer(data));
+    }
+
+    static std::string read_data_until(boost::asio::ip::tcp::socket & socket)
+    {
+        boost::asio::streambuf buffer;
+
+        boost::asio::read_until(socket, buffer, char(4));
+
+        std::string message;
+
+        // Because buffer 'buf' may contain some other data
+        // after '\n' symbol, we have to parse the buffer and
+        // extract only symbols before the delimiter.
+        std::istream input_stream(&buffer);
+        std::getline(input_stream, message, char(4));
+
+        return message;
+    }
 
     void start(){
         is_session_ended_ = false;
