@@ -6,21 +6,22 @@
 class Asteroid : public Entity
 {
 public:
-    Asteroid(std::mt19937 & rng)
+    Asteroid(std::mt19937 & rng, std::uniform_int_distribution<int> uniform_int_distribution,
+             Animation& a, float X, float Y, float Angle = 0.0f, float radius = 1) :
+            Entity(a, X, Y, Angle, radius)
     {
-        std::uniform_int_distribution<int> uniform_int_distribution(-4, 4);
-        dx() = static_cast<float>(uniform_int_distribution(rng));
-        dy() = static_cast<float>(uniform_int_distribution(rng));
-        name() = constants::EntityName::Asteroid;
+        dx = static_cast<float>(uniform_int_distribution(rng));
+        dy = static_cast<float>(uniform_int_distribution(rng));
+        name = constants::EntityName::Asteroid;
     }
 private:
-    void update() override
+    void movement() override
     {
-        x() += dx();
-        y() += dy();
+        x += dx;
+        y += dy;
 
-        if (x() > constants::kWidth) x() = 0;  if (x() < 0) x() = constants::kWidth;
-        if (y() > constants::kHeight) y() = 0;  if (y() < 0) y() = constants::kHeight;
+        if (x > constants::kWidth) x = 0;  if (x < 0) x = constants::kWidth;
+        if (y > constants::kHeight) y = 0;  if (y < 0) y = constants::kHeight;
     }
 };
 

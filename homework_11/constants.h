@@ -8,9 +8,9 @@ namespace constants{
     inline const unsigned int kWidth = sf::VideoMode::getDesktopMode().width;
     inline const unsigned int kHeight = sf::VideoMode::getDesktopMode().height;
     inline const float kDegToRad = 0.017453f;
-    inline const auto kRandMax = RAND_MAX;
+    inline const auto kRandMax = 32767;
 
-    enum EntityName{
+    enum class EntityName{
         Asteroid,
         Bullet,
         Player,
