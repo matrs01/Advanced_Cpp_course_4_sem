@@ -18,4 +18,5 @@ endif()
 
 if (MINGW)
     add_subdirectory(homework_11)
+    add_subdirectory(homework_12)
 endif()
